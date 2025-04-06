@@ -15,7 +15,6 @@ const router = useRouter()
 
 async function validateToken(permission) {
   try {
-    debugger;
     const url = import.meta.env.VITE_URL_AUTH + "/api/validation/token";
     const token = localStorage.getItem('authToken');
     
