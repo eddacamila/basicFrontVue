@@ -1,23 +1,40 @@
 <script setup>
 import { ref } from 'vue'
-//import axios from 'axios'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
 
 const username = ref('')
 const password = ref('')
-
-import { useRouter } from 'vue-router'
-
 const router = useRouter()
 
-function handleLogin() {
-  // Simula una respuesta exitosa
-  const tokenFalso = 'token-de-prueba-123'
+async function handleLogin() {
+  try {
+    const url = import.meta.env.VITE_URL_AUTH + "/api/auth/login";
+    const response = await axios.post(url, {
+      email: username.value,
+      password: password.value
+    })
 
-  // Guarda el "token"
-  localStorage.setItem('authToken', tokenFalso)
-
-  // Redirige al dashboard
-  router.push('/dashboard')
+    if (response.status === 200) {
+      // Assuming the token comes in response.data.token
+      const token = response.data.token
+      
+      localStorage.setItem('authToken', token)
+      
+      router.push('/dashboard')
+    }
+  } catch (error) {   
+    if (error.response) {      
+      alert('Credenciales no válidas. Por favor, intente nuevamente.')
+    } else if (error.request) {
+      
+      alert('Error de autenticación. Por favor, verifique su usuario y contraseña.')
+    } else {
+      
+      alert('Error al procesar la solicitud. Por favor, intente nuevamente.')
+    }
+    console.error('Error during login:', error)
+  }
 }
 
 /*
